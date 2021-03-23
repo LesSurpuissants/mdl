@@ -34,9 +34,15 @@ class Atelier
      */
     private $inscriptions;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Vacation::class, mappedBy="atelier")
+     */
+    private $vacations;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
+        $this->vacations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -88,6 +94,36 @@ class Atelier
     public function removeInscription(Inscription $inscription): self
     {
         $this->inscriptions->removeElement($inscription);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Vacation[]
+     */
+    public function getVacations(): Collection
+    {
+        return $this->vacations;
+    }
+
+    public function addVacation(Vacation $vacation): self
+    {
+        if (!$this->vacations->contains($vacation)) {
+            $this->vacations[] = $vacation;
+            $vacation->setAtelier($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVacation(Vacation $vacation): self
+    {
+        if ($this->vacations->removeElement($vacation)) {
+            // set the owning side to null (unless already changed)
+            if ($vacation->getAtelier() === $this) {
+                $vacation->setAtelier(null);
+            }
+        }
 
         return $this;
     }
