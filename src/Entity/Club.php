@@ -20,13 +20,43 @@ class Club
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity=Licencie::class, mappedBy="leClub")
+     * @ORM\Column(type="string", length=255)
      */
-    private $lesLicencies;
+    private $nom;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $adresse1;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $adresse2;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $cp;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $vile;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $tel;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Licencie::class, mappedBy="club")
+     */
+    private $licencies;
 
     public function __construct()
     {
-        $this->lesLicencies = new ArrayCollection();
+        $this->licencies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -34,30 +64,102 @@ class Club
         return $this->id;
     }
 
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getAdresse1(): ?string
+    {
+        return $this->adresse1;
+    }
+
+    public function setAdresse1(string $adresse1): self
+    {
+        $this->adresse1 = $adresse1;
+
+        return $this;
+    }
+
+    public function getAdresse2(): ?string
+    {
+        return $this->adresse2;
+    }
+
+    public function setAdresse2(?string $adresse2): self
+    {
+        $this->adresse2 = $adresse2;
+
+        return $this;
+    }
+
+    public function getCp(): ?string
+    {
+        return $this->cp;
+    }
+
+    public function setCp(string $cp): self
+    {
+        $this->cp = $cp;
+
+        return $this;
+    }
+
+    public function getVile(): ?string
+    {
+        return $this->vile;
+    }
+
+    public function setVile(string $vile): self
+    {
+        $this->vile = $vile;
+
+        return $this;
+    }
+
+    public function getTel(): ?string
+    {
+        return $this->tel;
+    }
+
+    public function setTel(string $tel): self
+    {
+        $this->tel = $tel;
+
+        return $this;
+    }
+
     /**
      * @return Collection|Licencie[]
      */
-    public function getLesLicencies(): Collection
+    public function getLicencies(): Collection
     {
-        return $this->lesLicencies;
+        return $this->licencies;
     }
 
-    public function addLesLicency(Licencie $lesLicency): self
+    public function addLicency(Licencie $licency): self
     {
-        if (!$this->lesLicencies->contains($lesLicency)) {
-            $this->lesLicencies[] = $lesLicency;
-            $lesLicency->setLeClub($this);
+        if (!$this->licencies->contains($licency)) {
+            $this->licencies[] = $licency;
+            $licency->setClub($this);
         }
 
         return $this;
     }
 
-    public function removeLesLicency(Licencie $lesLicency): self
+    public function removeLicency(Licencie $licency): self
     {
-        if ($this->lesLicencies->removeElement($lesLicency)) {
+        if ($this->licencies->removeElement($licency)) {
             // set the owning side to null (unless already changed)
-            if ($lesLicency->getLeClub() === $this) {
-                $lesLicency->setLeClub(null);
+            if ($licency->getClub() === $this) {
+                $licency->setClub(null);
             }
         }
 

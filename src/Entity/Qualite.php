@@ -20,13 +20,13 @@ class Qualite
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity=Licencie::class, mappedBy="laQualite")
+     * @ORM\OneToMany(targetEntity=Licencie::class, mappedBy="qualite")
      */
-    private $lesLicencies;
+    private $licencies;
 
     public function __construct()
     {
-        $this->lesLicencies = new ArrayCollection();
+        $this->licencies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -37,30 +37,34 @@ class Qualite
     /**
      * @return Collection|Licencie[]
      */
-    public function getLesLicencies(): Collection
+    public function getLicencies(): Collection
     {
-        return $this->lesLicencies;
+        return $this->licencies;
     }
 
-    public function addLesLicency(Licencie $lesLicency): self
+    public function addLicency(Licencie $licency): self
     {
-        if (!$this->lesLicencies->contains($lesLicency)) {
-            $this->lesLicencies[] = $lesLicency;
-            $lesLicency->setLaQualite($this);
+        if (!$this->licencies->contains($licency)) {
+            $this->licencies[] = $licency;
+            $licency->setQualite($this);
         }
 
         return $this;
     }
 
-    public function removeLesLicency(Licencie $lesLicency): self
+    public function removeLicency(Licencie $licency): self
     {
-        if ($this->lesLicencies->removeElement($lesLicency)) {
+        if ($this->licencies->removeElement($licency)) {
             // set the owning side to null (unless already changed)
-            if ($lesLicency->getLaQualite() === $this) {
-                $lesLicency->setLaQualite(null);
+            if ($licency->getQualite() === $this) {
+                $licency->setQualite(null);
             }
         }
 
         return $this;
     }
+
+    
+
+
 }

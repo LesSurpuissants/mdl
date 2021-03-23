@@ -28,16 +28,22 @@ class Licencie
     private $email;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Club::class, inversedBy="lesLicencies")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $leClub;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Qualite::class, inversedBy="lesLicencies")
      * @ORM\JoinColumn(nullable=false)
      */
     private $laQualite;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Club::class, inversedBy="licencies")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $club;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Qualite::class, inversedBy="licencies")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $qualite;
 
     public function getId(): ?int
     {
@@ -68,17 +74,6 @@ class Licencie
         return $this;
     }
 
-    public function getLeClub(): ?Club
-    {
-        return $this->leClub;
-    }
-
-    public function setLeClub(?Club $leClub): self
-    {
-        $this->leClub = $leClub;
-
-        return $this;
-    }
 
     public function getLaQualite(): ?Qualite
     {
@@ -88,6 +83,30 @@ class Licencie
     public function setLaQualite(?Qualite $laQualite): self
     {
         $this->laQualite = $laQualite;
+
+        return $this;
+    }
+
+    public function getClub(): ?Club
+    {
+        return $this->club;
+    }
+
+    public function setClub(?Club $club): self
+    {
+        $this->club = $club;
+
+        return $this;
+    }
+
+    public function getQualite(): ?Qualite
+    {
+        return $this->qualite;
+    }
+
+    public function setQualite(?Qualite $qualite): self
+    {
+        $this->qualite = $qualite;
 
         return $this;
     }
