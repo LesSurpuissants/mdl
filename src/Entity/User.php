@@ -45,6 +45,11 @@ class User implements UserInterface
      */
     private $email;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Inscription::class, mappedBy="compte", cascade={"persist", "remove"})
+     */
+    private $inscription;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -156,6 +161,23 @@ class User implements UserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getInscription(): ?Inscription
+    {
+        return $this->inscription;
+    }
+
+    public function setInscription(Inscription $inscription): self
+    {
+        // set the owning side of the relation if necessary
+        if ($inscription->getCompte() !== $this) {
+            $inscription->setCompte($this);
+        }
+
+        $this->inscription = $inscription;
 
         return $this;
     }
