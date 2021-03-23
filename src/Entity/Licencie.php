@@ -45,6 +45,11 @@ class Licencie
      */
     private $qualite;
 
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, inversedBy="licencie", cascade={"persist", "remove"})
+     */
+    private $compte;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -107,6 +112,18 @@ class Licencie
     public function setQualite(?Qualite $qualite): self
     {
         $this->qualite = $qualite;
+
+        return $this;
+    }
+
+    public function getCompte(): ?User
+    {
+        return $this->compte;
+    }
+
+    public function setCompte(?User $compte): self
+    {
+        $this->compte = $compte;
 
         return $this;
     }
