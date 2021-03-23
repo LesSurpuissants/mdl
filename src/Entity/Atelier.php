@@ -39,10 +39,16 @@ class Atelier
      */
     private $vacations;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Theme::class, inversedBy="ateliers")
+     */
+    private $themes;
+
     public function __construct()
     {
         $this->inscriptions = new ArrayCollection();
         $this->vacations = new ArrayCollection();
+        $this->themes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,6 +130,30 @@ class Atelier
                 $vacation->setAtelier(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Theme[]
+     */
+    public function getThemes(): Collection
+    {
+        return $this->themes;
+    }
+
+    public function addTheme(Theme $theme): self
+    {
+        if (!$this->themes->contains($theme)) {
+            $this->themes[] = $theme;
+        }
+
+        return $this;
+    }
+
+    public function removeTheme(Theme $theme): self
+    {
+        $this->themes->removeElement($theme);
 
         return $this;
     }
