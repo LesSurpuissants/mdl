@@ -35,9 +35,15 @@ class Inscription
      */
     private $ateliers;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Restauration::class, mappedBy="inscription")
+     */
+    private $restaurations;
+
     public function __construct()
     {
         $this->ateliers = new ArrayCollection();
+        $this->restaurations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -91,6 +97,36 @@ class Inscription
     {
         if ($this->ateliers->removeElement($atelier)) {
             $atelier->removeInscription($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Restauration[]
+     */
+    public function getRestaurations(): Collection
+    {
+        return $this->restaurations;
+    }
+
+    public function addRestauration(Restauration $restauration): self
+    {
+        if (!$this->restaurations->contains($restauration)) {
+            $this->restaurations[] = $restauration;
+            $restauration->setInscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRestauration(Restauration $restauration): self
+    {
+        if ($this->restaurations->removeElement($restauration)) {
+            // set the owning side to null (unless already changed)
+            if ($restauration->getInscription() === $this) {
+                $restauration->setInscription(null);
+            }
         }
 
         return $this;
