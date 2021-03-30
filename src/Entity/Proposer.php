@@ -35,6 +35,12 @@ class Proposer
      */
     private $hotel;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=CategorieChambre::class, inversedBy="proposers")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $categorieChambre;
+
     public function __construct()
     {
         $this->nuites = new ArrayCollection();
@@ -95,6 +101,18 @@ class Proposer
     public function setHotel(?Hotel $hotel): self
     {
         $this->hotel = $hotel;
+
+        return $this;
+    }
+
+    public function getCategorieChambre(): ?CategorieChambre
+    {
+        return $this->categorieChambre;
+    }
+
+    public function setCategorieChambre(?CategorieChambre $categorieChambre): self
+    {
+        $this->categorieChambre = $categorieChambre;
 
         return $this;
     }
