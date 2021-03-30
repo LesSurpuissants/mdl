@@ -29,9 +29,9 @@ class Vacation
 
     /**
      * @ORM\ManyToOne(targetEntity=Atelier::class, inversedBy="vacations")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $atelier;
+
 
     public function getId(): ?int
     {

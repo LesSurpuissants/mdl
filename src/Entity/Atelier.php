@@ -35,14 +35,14 @@ class Atelier
     private $inscriptions;
 
     /**
-     * @ORM\OneToMany(targetEntity=Vacation::class, mappedBy="atelier")
-     */
-    private $vacations;
-
-    /**
      * @ORM\ManyToMany(targetEntity=Theme::class, inversedBy="ateliers")
      */
     private $themes;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Vacation::class, mappedBy="atelier")
+     */
+    private $vacations;
 
     public function __construct()
     {
@@ -112,28 +112,6 @@ class Atelier
         return $this->vacations;
     }
 
-    public function addVacation(Vacation $vacation): self
-    {
-        if (!$this->vacations->contains($vacation)) {
-            $this->vacations[] = $vacation;
-            $vacation->setAtelier($this);
-        }
-
-        return $this;
-    }
-
-    public function removeVacation(Vacation $vacation): self
-    {
-        if ($this->vacations->removeElement($vacation)) {
-            // set the owning side to null (unless already changed)
-            if ($vacation->getAtelier() === $this) {
-                $vacation->setAtelier(null);
-            }
-        }
-
-        return $this;
-    }
-
     /**
      * @return Collection|Theme[]
      */
@@ -154,6 +132,28 @@ class Atelier
     public function removeTheme(Theme $theme): self
     {
         $this->themes->removeElement($theme);
+
+        return $this;
+    }
+
+    public function addVacation(Vacation $vacation): self
+    {
+        if (!$this->vacations->contains($vacation)) {
+            $this->vacations[] = $vacation;
+            $vacation->setAtelier($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVacation(Vacation $vacation): self
+    {
+        if ($this->vacations->removeElement($vacation)) {
+            // set the owning side to null (unless already changed)
+            if ($vacation->getAtelier() === $this) {
+                $vacation->setAtelier(null);
+            }
+        }
 
         return $this;
     }
