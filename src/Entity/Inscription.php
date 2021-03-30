@@ -40,10 +40,16 @@ class Inscription
      */
     private $restaurations;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Nuite::class)
+     */
+    private $nuites;
+
     public function __construct()
     {
         $this->ateliers = new ArrayCollection();
         $this->restaurations = new ArrayCollection();
+        $this->nuites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -128,6 +134,30 @@ class Inscription
                 $restauration->setInscription(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Nuite[]
+     */
+    public function getNuites(): Collection
+    {
+        return $this->nuites;
+    }
+
+    public function addNuite(Nuite $nuite): self
+    {
+        if (!$this->nuites->contains($nuite)) {
+            $this->nuites[] = $nuite;
+        }
+
+        return $this;
+    }
+
+    public function removeNuite(Nuite $nuite): self
+    {
+        $this->nuites->removeElement($nuite);
 
         return $this;
     }
