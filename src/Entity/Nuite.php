@@ -22,6 +22,12 @@ class Nuite
      */
     private $dateNuitee;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Proposer::class, inversedBy="nuites")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $proposer;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,6 +41,18 @@ class Nuite
     public function setDateNuitee(\DateTimeInterface $dateNuitee): self
     {
         $this->dateNuitee = $dateNuitee;
+
+        return $this;
+    }
+
+    public function getProposer(): ?Proposer
+    {
+        return $this->proposer;
+    }
+
+    public function setProposer(?Proposer $proposer): self
+    {
+        $this->proposer = $proposer;
 
         return $this;
     }
