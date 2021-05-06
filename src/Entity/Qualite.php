@@ -24,6 +24,11 @@ class Qualite
      */
     private $licencies;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $libelle;
+
     public function __construct()
     {
         $this->licencies = new ArrayCollection();
@@ -60,6 +65,18 @@ class Qualite
                 $licency->setQualite(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLibelle(): ?string
+    {
+        return $this->libelle;
+    }
+
+    public function setLibelle(string $libelle): self
+    {
+        $this->libelle = $libelle;
 
         return $this;
     }

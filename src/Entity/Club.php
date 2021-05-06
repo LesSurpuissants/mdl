@@ -42,7 +42,7 @@ class Club
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $vile;
+    private $ville;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -112,14 +112,14 @@ class Club
         return $this;
     }
 
-    public function getVile(): ?string
+    public function getVille(): ?string
     {
         return $this->vile;
     }
 
-    public function setVile(string $vile): self
+    public function setVille(string $ville): self
     {
-        $this->vile = $vile;
+        $this->ville = $ville;
 
         return $this;
     }
