@@ -14,7 +14,6 @@ class AtelierType extends AbstractType
         $builder
             ->add('libelle')
             ->add('nbPlacesMaxi')
-            ->add('inscriptions')
             ->add('themes')
         ;
     }

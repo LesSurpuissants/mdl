@@ -18,8 +18,8 @@
         {% for vacation in vacations %}
             <tr>
                 <td>{{ vacation.id }}</td>
-                <td>{{ vacation.dateHeureDebut ? vacation.dateHeureDebut|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ vacation.dateHeureFin ? vacation.dateHeureFin|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ vacation.dateHeureDebut ? vacation.dateHeureDebut|date('d m Y H:i') : '' }}</td>
+                <td>{{ vacation.dateHeureFin ? vacation.dateHeureFin|date('d m Y H:i') : '' }}</td>
                 <td>
                     <a href="{{ path('vacation_show', {'id': vacation.id}) }}">show</a>
                     <a href="{{ path('vacation_edit', {'id': vacation.id}) }}">edit</a>

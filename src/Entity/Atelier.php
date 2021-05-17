@@ -136,6 +136,11 @@ class Atelier
         return $this;
     }
 
+    public function setTheme(Theme $theme): self
+    {
+        return $this->addTheme($theme);
+    }
+
     public function addVacation(Vacation $vacation): self
     {
         if (!$this->vacations->contains($vacation)) {
@@ -156,5 +161,10 @@ class Atelier
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getLibelle();
     }
 }
