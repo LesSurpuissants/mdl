@@ -1,19 +1,28 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Register
+{% endblock %}
 
 {% block body %}
-    {% for flashError in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
-    {% endfor %}
+	{% if app.user %}
+		<div class="mb-3">
+			Vous êtes déjà connecté,
+			<a href="{{ path('app_logout') }}">Déconnexion</a>
+		</div>
+	{% else %}
+		{% for flashError in app.flashes('verify_email_error') %}
+			<div class="alert alert-danger" role="alert">{{ flashError }}</div>
+		{% endfor %}
 
-    <h1>Register</h1>
+		<h1>Register</h1>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.numLicence, {
+		{{ form_start(registrationForm) }}
+		{{ form_row(registrationForm.numLicence, {
             label : 'Numéro de licence'
         }) }}
-        {{ form_row(registrationForm.password ) }}
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+		{{ form_row(registrationForm.password ) }}
+		<button type="submit" class="btn">Register</button>
+		{{ form_end(registrationForm) }}
+
+	{% endif %}
 {% endblock %}

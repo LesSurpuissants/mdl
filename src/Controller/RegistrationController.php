@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Licencie;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\LoginFormAuthenticator;
@@ -10,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 class RegistrationController extends AbstractController
@@ -24,26 +26,37 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
+            if ($licencie = $this->getDoctrine()->getRepository(Licencie::class)->findOneBy(array('numLicence' => $form->get('numLicence')->getData()))) {
+                // encode the plain password
+                $user->setPassword(
+                    $passwordEncoder->encodePassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+                $user->setNumLicence($form->get('numLicence')->getData());
+                $user->setEmail($licencie->getEmail());
+
+
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+                // do anything else you need here, like send an email
+
+
+
+
+                return $guardHandler->authenticateUserAndHandleSuccess(
                     $user,
-                    $form->get('password')->getData()
-                )
-            );
-            $user->setNumLicence($form->get('numLicence')->getData());
+                    $request,
+                    $authenticator,
+                    'main' // firewall name in security.yaml
+                );
+            }
+            $exception = new AuthenticationException("Numéro de licence inconnu");
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-            // do anything else you need here, like send an email
-
-            return $guardHandler->authenticateUserAndHandleSuccess(
-                $user,
-                $request,
-                $authenticator,
-                'main' // firewall name in security.yaml
-            );
+            return $guardHandler->handleAuthenticationFailure($exception, $request, $authenticator, "oui"); //Todo : à améliorer, mais pour l'instant fera l'affaire
         }
 
         return $this->render('registration/register.html.twig', [

@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+	{% if app.user %}
+		<div class="mb-3">
+			Vous êtes connecté,
+			<a href="{{ path('app_logout') }}">Déconnexion</a>
+		</div>
+	{% endif %}
+	<h1>Home</h1>
+{% endblock %}
