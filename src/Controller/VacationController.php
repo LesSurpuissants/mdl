@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Vacation;
 use App\Form\VacationType;
 use App\Repository\VacationRepository;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,8 +35,15 @@ class VacationController extends AbstractController
     {
         $vacation = new Vacation();
         $form = $this->createForm(VacationType::class, $vacation);
-        $form->handleRequest($request);
-
+        try {
+            $form->handleRequest($request);
+        } catch (Exception $ex) {
+            return $this->render('vacation/new.html.twig', [
+                'error' => $ex->getMessage(),
+                'vacation' => $vacation,
+                'form' => $form->createView(),
+            ]);
+        }
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($vacation);
@@ -45,6 +53,7 @@ class VacationController extends AbstractController
         }
 
         return $this->render('vacation/new.html.twig', [
+            'error' => null,
             'vacation' => $vacation,
             'form' => $form->createView(),
         ]);
@@ -66,7 +75,15 @@ class VacationController extends AbstractController
     public function edit(Request $request, Vacation $vacation): Response
     {
         $form = $this->createForm(VacationType::class, $vacation);
-        $form->handleRequest($request);
+        try {
+            $form->handleRequest($request);
+        } catch (Exception $ex) {
+            return $this->render('vacation/new.html.twig', [
+                'error' => $ex->getMessage(),
+                'vacation' => $vacation,
+                'form' => $form->createView(),
+            ]);
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
@@ -75,6 +92,7 @@ class VacationController extends AbstractController
         }
 
         return $this->render('vacation/edit.html.twig', [
+            'error' => null,
             'vacation' => $vacation,
             'form' => $form->createView(),
         ]);
@@ -85,7 +103,7 @@ class VacationController extends AbstractController
      */
     public function delete(Request $request, Vacation $vacation): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$vacation->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $vacation->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($vacation);
             $entityManager->flush();

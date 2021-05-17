@@ -1,11 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Vacation{% endblock %}
+{% block title %}New Vacation
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Vacation</h1>
+	{% if error %}
+		<div class="alert alert-danger">{{ error }}</div>
+	{% endif %}
+	<h1>Create new Vacation</h1>
 
-    {{ include('vacation/_form.html.twig') }}
+	{{ include('vacation/_form.html.twig') }}
 
-    <a href="{{ path('vacation_index') }}">back to list</a>
+	<a href="{{ path('vacation_index') }}">back to list</a>
 {% endblock %}

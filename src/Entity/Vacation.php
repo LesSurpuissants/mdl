@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\VacationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\VacationRepository;
+use Exception;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * @ORM\Entity(repositoryClass=VacationRepository::class)
@@ -57,9 +60,13 @@ class Vacation
 
     public function setDateHeureFin(\DateTimeInterface $dateHeureFin): self
     {
-        $this->dateHeureFin = $dateHeureFin;
+        if ($this->dateHeureDebut < $dateHeureFin) {
+            $this->dateHeureFin = $dateHeureFin;
 
-        return $this;
+            return $this;
+        }
+
+        throw new Exception('La date de fin doit être postérieure à la date de début.');
     }
 
     public function getAtelier(): ?Atelier

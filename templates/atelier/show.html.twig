@@ -32,8 +32,8 @@
             <tr>
 				<th>Vacation(s)</th>
 				<td>
-					{% for theme in atelier.vacations %}
-						{{ theme.dateHeureDebut|date('d m Y H:i') }} | {{ theme.dateHeureFin|date('H:i') }} <br>
+					{% for vacation in atelier.vacations %}
+						{{ vacation.dateHeureDebut|date('d m Y : H:i') }} - {{ vacation.dateHeureFin|date('H:i') }} <a href="{{ path('vacation_edit', {'id': vacation.id}) }}">Modifier</a> <br>
 					{% endfor %}                   
 				</td>
 			</tr>
@@ -42,7 +42,7 @@
 
 	<a href="{{ path('atelier_index') }}">back to list</a>
 
-	<a href="{{ path('atelier_edit', {'id': atelier.id}) }}">edit</a>
+	<a href="{{ path('atelier_edit', {'id': atelier.id}) }}">Modifier</a>
 
 	{{ include('atelier/_delete_form.html.twig') }}
 {% endblock %}

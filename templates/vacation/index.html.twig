@@ -11,6 +11,7 @@
                 <th>Id</th>
                 <th>DateHeureDebut</th>
                 <th>DateHeureFin</th>
+                <th>Atelier</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -20,6 +21,7 @@
                 <td>{{ vacation.id }}</td>
                 <td>{{ vacation.dateHeureDebut ? vacation.dateHeureDebut|date('d m Y H:i') : '' }}</td>
                 <td>{{ vacation.dateHeureFin ? vacation.dateHeureFin|date('d m Y H:i') : '' }}</td>
+                <td>{{ vacation.atelier.libelle }}</td>
                 <td>
                     <a href="{{ path('vacation_show', {'id': vacation.id}) }}">show</a>
                     <a href="{{ path('vacation_edit', {'id': vacation.id}) }}">edit</a>

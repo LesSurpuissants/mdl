@@ -19,6 +19,10 @@
                 <th>DateHeureFin</th>
                 <td>{{ vacation.dateHeureFin ? vacation.dateHeureFin|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
+            <tr>
+                <th>Atelier</th>
+                <td>{{ vacation.atelier.libelle }} <a href="{{ path('atelier_show', {'id': vacation.atelier.id}) }}">Afficher</td>
+            </tr>
         </tbody>
     </table>
 
