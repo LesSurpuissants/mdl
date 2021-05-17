@@ -54,12 +54,16 @@ class RegistrationController extends AbstractController
                     'main' // firewall name in security.yaml
                 );
             }
-            $exception = new AuthenticationException("Numéro de licence inconnu");
 
-            return $guardHandler->handleAuthenticationFailure($exception, $request, $authenticator, "oui"); //Todo : à améliorer, mais pour l'instant fera l'affaire
+            return $this->render('registration/register.html.twig', [
+                'error' => 'Numéro de licence invalide.',
+                'registrationForm' => $form->createView(),
+            ]);
         }
 
+
         return $this->render('registration/register.html.twig', [
+            'error' => null,
             'registrationForm' => $form->createView(),
         ]);
     }

@@ -10,6 +10,9 @@
 			<a href="{{ path('app_logout') }}">Déconnexion</a>
 		</div>
 	{% else %}
+		{% if error %}
+			<div class="alert alert-danger">{{ error }}</div>
+		{% endif %}
 		{% for flashError in app.flashes('verify_email_error') %}
 			<div class="alert alert-danger" role="alert">{{ flashError }}</div>
 		{% endfor %}
