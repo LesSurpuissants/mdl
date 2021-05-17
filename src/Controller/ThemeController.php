@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @IsGranted("ROLE_USER", message="Vous n'avez pas les droits necessaires pour accéder à cette page")
  * @Route("/theme")
  */
 class ThemeController extends AbstractController
