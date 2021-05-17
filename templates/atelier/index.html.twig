@@ -11,7 +11,8 @@
                 <th>Id</th>
                 <th>Libelle</th>
                 <th>NbPlacesMaxi</th>
-                <th>actions</th>
+                <th>Theme(s)</th>
+                <th>Actions</th>                
             </tr>
         </thead>
         <tbody>
@@ -20,6 +21,12 @@
                 <td>{{ atelier.id }}</td>
                 <td>{{ atelier.libelle }}</td>
                 <td>{{ atelier.nbPlacesMaxi }}</td>
+                <td>
+					{% for theme in atelier.themes %}
+						{{ theme.libelle }},
+					{% endfor %}
+                    
+				</td>
                 <td>
                     <a href="{{ path('atelier_show', {'id': atelier.id}) }}">show</a>
                     <a href="{{ path('atelier_edit', {'id': atelier.id}) }}">edit</a>
