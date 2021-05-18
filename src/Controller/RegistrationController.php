@@ -21,6 +21,9 @@ class RegistrationController extends AbstractController
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, LoginFormAuthenticator $authenticator): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('home');
+        }
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -34,6 +37,7 @@ class RegistrationController extends AbstractController
                         $form->get('password')->getData()
                     )
                 );
+                $user->setLicencie($licencie);
                 $user->setNumLicence($form->get('numLicence')->getData());
                 $user->setEmail($licencie->getEmail());
 
@@ -54,16 +58,14 @@ class RegistrationController extends AbstractController
                     'main' // firewall name in security.yaml
                 );
             }
-
+            $this->addFlash('verify_email_error', 'Numéro de licence invalide.');
             return $this->render('registration/register.html.twig', [
-                'error' => 'Numéro de licence invalide.',
                 'registrationForm' => $form->createView(),
             ]);
         }
 
 
         return $this->render('registration/register.html.twig', [
-            'error' => null,
             'registrationForm' => $form->createView(),
         ]);
     }

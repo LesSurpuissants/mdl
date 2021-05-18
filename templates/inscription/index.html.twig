@@ -1,20 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello InscriptionController!{% endblock %}
+{% block title %}Inscription
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+	<style>
+		.example-wrapper {
+			margin: 1em auto;
+			max-width: 800px;
+			width: 95%;
+			font: 18px / 1.5 sans-serif;
+		}
+	</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+	<div class="example-wrapper">
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success">
+				{{ message }}
+			</div>
+		{% endfor %}
+        {% for message in app.flashes('error') %}
+			<div class="alert alert-error">
+				{{ message }}
+			</div>
+		{% endfor %}
+		<h1>Inscription</h1>
+		<div>
+			<p>Nom :
+				{{ app.user.licencie.nom }}</p>
+			<p>Prenom :
+				{{ app.user.licencie.prenom }}</p>
+			<p>Adresse :
+				{{ app.user.licencie.adresse1 }}</p>
+			<form method="post" action="{{ path('inscription_changeEmail') }}">
+				<label for="inputEmail">Adresse mail :
+				</label>
+				<input type="email" value="{{ app.user.email }}" name="email" id="inputEmail" class="form-control" required autofocus>
+				<button class="btn btn-lg btn-primary" type="submit">
+					Modifier
+				</button>
+			</form>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/user/Documents/Projet/mdl/mdl/src/Controller/InscriptionController.php'|file_link(0) }}">src/Controller/InscriptionController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/user/Documents/Projet/mdl/mdl/templates/inscription/index.html.twig'|file_link(0) }}">templates/inscription/index.html.twig</a></code></li>
-    </ul>
-</div>
+		</div>
+		<hr>
+		<div>
+			<p>Numéro de licence :
+				{{ app.user.numLicence }}</p>
+			<p>Club :
+				{{ app.user.licencie.club.nom }}</p>
+			<p>Qualité :
+				{{ app.user.licencie.qualite.libelle }}</p>
+		</div>
+		<hr>
+		<form action="{{ path('inscription_submit')}}" method="post">
+			<div>
+				<h2>Choix des ateliers (5 ateliers maximum)</h2>
+                {% for atelier in ateliers %}
+                <label for="{{ atelier.libelle }}">{{ atelier.id }}. {{ atelier.libelle }}</label>
+                <input type="checkbox" value="{{ atelier.id }}" name="atelier{{ atelier.id }}"><br>
+                {% endfor %}
+			</div>
+            <button class="btn btn-lg btn-primary" type="submit">
+					S'inscrire
+				</button>
+		</form>
+	</div>
+
+
 {% endblock %}

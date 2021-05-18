@@ -167,4 +167,9 @@ class Atelier
     {
         return $this->getLibelle();
     }
+
+    public function hasPlaceDisponible(): Bool
+    {
+        return count($this->getInscriptions()) < $this->nbPlacesMaxi;
+    }
 }

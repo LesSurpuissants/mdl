@@ -114,7 +114,7 @@ class Club
 
     public function getVille(): ?string
     {
-        return $this->vile;
+        return $this->ville;
     }
 
     public function setVille(string $ville): self
