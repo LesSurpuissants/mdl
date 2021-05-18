@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Atelier;
+use App\Entity\Hotel;
 use App\Entity\Inscription;
 use App\Entity\Licencie;
+use App\Entity\Nuite;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,8 +27,10 @@ class InscriptionController extends AbstractController
     public function index(): Response
     {
         $ateliers = $this->getDoctrine()->getRepository(Atelier::class)->findAll();
+        $hotels = $this->getDoctrine()->getRepository(Hotel::class)->findAll();
 
         return $this->render('inscription/index.html.twig', [
+            'hotels' => $hotels,
             'ateliers' => $ateliers,
             'controller_name' => 'InscriptionController',
         ]);
@@ -82,10 +86,6 @@ class InscriptionController extends AbstractController
                 }
                 $countAtelier++;
                 $inscription->addAtelier($atelier);
-            } else {
-                $this->addFlash('errorAtelier', 'Une erreur est survenu.');
-
-                return $this->redirectToRoute('inscription_index');
             }
         }
         //Gestion du "5 ateliers maximum"
@@ -94,7 +94,27 @@ class InscriptionController extends AbstractController
 
             return $this->redirectToRoute('inscription_index');
         }
-        dd($inscription);
+
+        //Gestion des hotels
+        if ($nuit13 = $request->get('nuit13')) {
+            if ($nuite = $this->getDoctrine()->getRepository(Nuite::class)->find($nuit13)) {
+                $inscription->addNuite($nuite);
+            } else {
+                $this->addFlash('errorNuite', 'Une erreur est survenu.');
+
+                return $this->redirectToRoute('inscription_index');
+            }
+        }
+        if ($nuit14 = $request->get('nuit14')) {
+            if ($nuite = $this->getDoctrine()->getRepository(Nuite::class)->find($nuit14)) {
+                $inscription->addNuite($nuite);
+            } else {
+                $this->addFlash('errorNuite', 'Une erreur est survenu.');
+
+                return $this->redirectToRoute('inscription_index');
+            }
+        }
+        // dd($inscription);
         return $this->redirectToRoute('inscription_index');
     }
 }
