@@ -20,7 +20,7 @@ class Inscription
     private $id;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateInscription;
 
@@ -44,6 +44,11 @@ class Inscription
      * @ORM\ManyToMany(targetEntity=Nuite::class)
      */
     private $nuites;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $montant;
 
     public function __construct()
     {
@@ -158,6 +163,18 @@ class Inscription
     public function removeNuite(Nuite $nuite): self
     {
         $this->nuites->removeElement($nuite);
+
+        return $this;
+    }
+
+    public function getMontant(): ?float
+    {
+        return $this->montant;
+    }
+
+    public function setMontant(float $montant): self
+    {
+        $this->montant = $montant;
 
         return $this;
     }
