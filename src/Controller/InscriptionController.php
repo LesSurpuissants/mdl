@@ -7,6 +7,7 @@ use App\Entity\Hotel;
 use App\Entity\Inscription;
 use App\Entity\Licencie;
 use App\Entity\Nuite;
+use App\Entity\Restauration;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\User;
+use DateTime;
 
 /**
  * @IsGranted("ROLE_INSCRIT", message="Vous n'avez pas les droits necessaires pour accéder à cette page")
@@ -74,6 +76,9 @@ class InscriptionController extends AbstractController
         }
         $inscription = new Inscription();
         $inscription->setCompte($user);
+        $entityManager = $this->getDoctrine()->getManager();
+        //Gestion du montant total
+        $montant = 100;
         //Gestion des ateliers
         $countAtelier = 0;
         for ($i = 1; $i < 7; $i++) {
@@ -95,10 +100,14 @@ class InscriptionController extends AbstractController
             return $this->redirectToRoute('inscription_index');
         }
 
+        //Gestion du montant total
+        $montant = 100;
+
         //Gestion des hotels
         if ($nuit13 = $request->get('nuit13')) {
             if ($nuite = $this->getDoctrine()->getRepository(Nuite::class)->find($nuit13)) {
                 $inscription->addNuite($nuite);
+                $montant += $nuite->getProposer()->getTarifNuite();
             } else {
                 $this->addFlash('errorNuite', 'Une erreur est survenu.');
 
@@ -108,13 +117,56 @@ class InscriptionController extends AbstractController
         if ($nuit14 = $request->get('nuit14')) {
             if ($nuite = $this->getDoctrine()->getRepository(Nuite::class)->find($nuit14)) {
                 $inscription->addNuite($nuite);
+                $montant += $nuite->getProposer()->getTarifNuite();
             } else {
                 $this->addFlash('errorNuite', 'Une erreur est survenu.');
 
                 return $this->redirectToRoute('inscription_index');
             }
         }
-        // dd($inscription);
-        return $this->redirectToRoute('inscription_index');
+
+        //Gestion des repas
+        if ($request->get('dejSam')) {
+            $restauration = new Restauration();
+            $restauration->setDateRestauration(new DateTime('2021-09-14'));
+            $restauration->setTypeRepas("déjeuner");
+            $inscription->addRestauration($restauration);
+            $entityManager->persist($restauration);
+            $montant += 35;
+        }
+        if ($request->get('dinSam')) {
+            $restauration = new Restauration();
+            $restauration->setDateRestauration(new DateTime('2021-09-14'));
+            $restauration->setTypeRepas("dîner");
+            $inscription->addRestauration($restauration);
+            $entityManager->persist($restauration);
+            $montant += 35;
+        }
+        if ($request->get('dejDim')) {
+            $restauration = new Restauration();
+            $restauration->setDateRestauration(new DateTime('2021-09-15'));
+            $restauration->setTypeRepas("déjeuner");
+            $inscription->addRestauration($restauration);
+            $entityManager->persist($restauration);
+            $montant += 35;
+        }
+
+        $inscription->setMontant($montant);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($inscription);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('inscription_recap');
+    }
+
+
+    /**
+     * @Route("/recap", name="_recap")
+     *
+     * @return Response
+     */
+    public function recap():Response {
+        return $this->render('inscription/recap.html.twig');
     }
 }

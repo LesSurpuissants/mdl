@@ -81,15 +81,15 @@
 					<div>
 						<h4>{{ hotel.nom }}</h4>
 						<div>
-							{{ hotel.proposers[0].nuites[0].dateNuitee|date('m/d') }}
-							{{ hotel.proposers[0].nuites[1].dateNuitee|date('m/d') }}
+							<p>{{ hotel.proposers[0].nuites[0].dateNuitee|date('m/d') }}
+								{{ hotel.proposers[0].nuites[1].dateNuitee|date('m/d') }}</p>
 						</div>
 						{% for proposer in hotel.proposers %}
 							<div>
 								{{ proposer.categorieChambre.libelleCategorie }}
 								({{ proposer.tarifNuite }}€/nuit)
 
-								{%for nuite in proposer.nuites %}
+								{% for nuite in proposer.nuites %}
 									<input type="radio" name="nuit{{ nuite.dateNuitee|date('d') }}" value="{{ nuite.id }}">
 								{% endfor %}
 							</div>
@@ -99,9 +99,18 @@
 					</div>
 				{% endfor %}
 			</div>
-            <hr>
-            <div>Réservation accompagnant(e)</div>
-
+			<hr>
+			<div>Réservation accompagnant(e)</div>
+			<div>
+				<p>Déjeuner	Dîner</p>
+			</div>
+            <div>
+                Samedi <input type="checkbox" name="dejSam" value="oui"> <input type="checkbox" name="dinSam" value="oui">
+            </div>
+            <br>
+            <div>
+                Dimanche <input type="checkbox" name="dejDim" value="oui">
+            </div>
 			<button class="btn btn-lg btn-primary" type="submit">
 				S'inscrire
 			</button>
