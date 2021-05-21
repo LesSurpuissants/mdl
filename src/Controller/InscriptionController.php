@@ -29,6 +29,15 @@ class InscriptionController extends AbstractController
      */
     public function index(): Response
     {
+        if (!$user = $this->getUser()) {
+
+            return $this->redirectToRoute('app_login');
+        }
+        //Au cas où l'utilisateur aurait déjà validé son inscription
+        if ($user->getInscription()->isValidated()) {
+
+            return $this->redirectToRoute('inscription_recap');
+        }
         $ateliers = $this->getDoctrine()->getRepository(Atelier::class)->findAll();
         $hotels = $this->getDoctrine()->getRepository(Hotel::class)->findAll();
 
@@ -172,7 +181,13 @@ class InscriptionController extends AbstractController
     {
         //Au cas où il y aurait un problème avec la récupération du user
         if (!$user = $this->getUser()) {
-            return $this->redirectToRoute('home');
+
+            return $this->redirectToRoute('app_login');
+        }
+        //Au cas où l'utilisateur aurait déjà validé son inscription
+        if ($user->getInscription()->isValidated()) {
+
+            return $this->redirectToRoute('inscription_recap');
         }
         $inscription = new Inscription();
         $inscription->setCompte($user);
@@ -204,6 +219,57 @@ class InscriptionController extends AbstractController
      */
     public function recap(): Response
     {
-        return $this->render('inscription/recap.html.twig');
+        if ($this->getUser()->getInscription()) {
+
+            return $this->render('inscription/recap.html.twig');
+        }
+
+        return $this->redirectToRoute('inscription_index');
+    }
+
+    /**
+     * @Route("/validate", name="_validate", methods={"POST"})
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function validate(Request $request): Response
+    {
+        if (!$user = $this->getUser()) {
+
+            return $this->redirectToRoute('app_login');
+        }
+        if (!$inscription = $user->getInscription()) {
+
+            return $this->redirectToRoute('inscription_index');
+        }
+
+        $inscription->setDateInscription(new DateTime());
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($inscription);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('inscription_congratulations');
+    }
+
+    /**
+     * @Route("/felicitations", name="_congratulations")
+     *
+     * @return Response
+     */
+    public function congratulations(): Response
+    {
+        if (!$user = $this->getUser()) {
+
+            return $this->redirectToRoute('app_login');
+        }
+        if ($user->getInscription()->IsValidated()) {
+
+            return $this->render('inscription/congratulations.html.twig');
+        } else {
+
+            return $this->redirectToRoute('home');
+        }
     }
 }

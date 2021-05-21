@@ -81,8 +81,8 @@
 					<div>
 						<h4>{{ hotel.nom }}</h4>
 						<div>
-							<p>{{ hotel.proposers[0].nuites[0].dateNuitee|date('m/d') }}
-								{{ hotel.proposers[0].nuites[1].dateNuitee|date('m/d') }}</p>
+							<p>{{ hotel.proposers[0].nuites[0].dateNuitee|date('d/m') }}
+								{{ hotel.proposers[0].nuites[1].dateNuitee|date('d/m') }}</p>
 						</div>
 						{% for proposer in hotel.proposers %}
 							<div>

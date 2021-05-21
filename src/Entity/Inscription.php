@@ -178,4 +178,19 @@ class Inscription
 
         return $this;
     }
+
+    /**
+     * Retourne vrai si l'inscription a déjà été validée
+     *
+     * @return boolean
+     */
+    public function isValidated(): bool
+    {
+        if($this->getDateInscription()) {
+
+            return true;
+        }
+
+        return false;
+    }
 }

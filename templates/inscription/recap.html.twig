@@ -1,4 +1,39 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-	Recap
+	<h1>Récapitualtif de l'inscription</h1>
+	<div>
+		<h3>Les ateliers que vous avez sélectionné :</h3>
+		<ul>
+			{% for atelier in app.user.inscription.ateliers %}
+				<li>{{ atelier.libelle }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div>
+		<h3>Les nuits d'hôtel sélectionnés</h3>
+		{% for nuite in app.user.inscription.nuites %}
+			<p>{{ nuite.dateNuitee|date('d/m') }}
+				-
+				{{ nuite.proposer.hotel.nom }}
+				-
+				{{ nuite.proposer.categorieChambre.libelleCategorie }}
+				-
+				{{ nuite.proposer.tarifNuite }}€</p>
+		{% endfor %}
+	</div>
+	<div>
+		<h3>Les repas selectionnées (35€/repas) :</h3>
+		{% for restauration in app.user.inscription.restaurations %}
+			<p>{{ restauration.dateRestauration|date('d/m') }}
+				-
+				{{ restauration.typeRepas|capitalize }}</p>
+		{% endfor %}
+	</div>
+	<div>
+		<h3>Montant total de l'inscription :
+			{{ app.user.inscription.montant }}€</h3>
+		<form action="{{ path('inscription_validate') }}" method="post">
+			<button type="submit">Valider mon inscription</button>
+		</form>
+	</div>
 {% endblock %}
