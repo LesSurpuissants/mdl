@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\User;
 use DateTime;
+use Doctrine\ORM\EntityManager;
 
 /**
  * @IsGranted("ROLE_INSCRIT", message="Vous n'avez pas les droits necessaires pour accéder à cette page")
@@ -63,23 +64,14 @@ class InscriptionController extends AbstractController
     }
 
     /**
-     * @Route("/submit", name="_submit", methods={"POST"})
-     * 
+     * Ajoute les ateliers sélectionnés à l'inscription dans le request et retourne l'inscription (vérifie la règle de <5)
      *
      * @param Request $request
-     * @return Response
+     * @param Inscription $inscription
+     * @return Inscription
      */
-    public function inscription(Request $request): Response
+    private function addAteliers(Request $request, Inscription $inscription): Inscription
     {
-        if (!$user = $this->getUser()) {
-            return $this->redirectToRoute('home');
-        }
-        $inscription = new Inscription();
-        $inscription->setCompte($user);
-        $entityManager = $this->getDoctrine()->getManager();
-        //Gestion du montant total
-        $montant = 100;
-        //Gestion des ateliers
         $countAtelier = 0;
         for ($i = 1; $i < 7; $i++) {
             if ($request->get('atelier' . $i)) {
@@ -100,39 +92,28 @@ class InscriptionController extends AbstractController
             return $this->redirectToRoute('inscription_index');
         }
 
-        //Gestion du montant total
-        $montant = 100;
+        return $inscription;
+    }
 
-        //Gestion des hotels
-        if ($nuit13 = $request->get('nuit13')) {
-            if ($nuite = $this->getDoctrine()->getRepository(Nuite::class)->find($nuit13)) {
-                $inscription->addNuite($nuite);
-                $montant += $nuite->getProposer()->getTarifNuite();
-            } else {
-                $this->addFlash('errorNuite', 'Une erreur est survenu.');
-
-                return $this->redirectToRoute('inscription_index');
-            }
-        }
-        if ($nuit14 = $request->get('nuit14')) {
-            if ($nuite = $this->getDoctrine()->getRepository(Nuite::class)->find($nuit14)) {
-                $inscription->addNuite($nuite);
-                $montant += $nuite->getProposer()->getTarifNuite();
-            } else {
-                $this->addFlash('errorNuite', 'Une erreur est survenu.');
-
-                return $this->redirectToRoute('inscription_index');
-            }
-        }
-
+    /**
+     * Ajoute les restaurations sélectionnés dans les request, + modifie le montant total de l'inscription, retourne l'inscription
+     *
+     * @param Request $request
+     * @param Inscription $inscription
+     * @param EntityManager $entityManager
+     * @return Inscription
+     */
+    private function addRestaurations(Request $request, Inscription $inscription, EntityManager $entityManager): Inscription
+    {
         //Gestion des repas
+
         if ($request->get('dejSam')) {
             $restauration = new Restauration();
             $restauration->setDateRestauration(new DateTime('2021-09-14'));
             $restauration->setTypeRepas("déjeuner");
             $inscription->addRestauration($restauration);
             $entityManager->persist($restauration);
-            $montant += 35;
+            $inscription->setMontant($inscription->getMontant() + 35);
         }
         if ($request->get('dinSam')) {
             $restauration = new Restauration();
@@ -140,7 +121,7 @@ class InscriptionController extends AbstractController
             $restauration->setTypeRepas("dîner");
             $inscription->addRestauration($restauration);
             $entityManager->persist($restauration);
-            $montant += 35;
+            $inscription->setMontant($inscription->getMontant() + 35);
         }
         if ($request->get('dejDim')) {
             $restauration = new Restauration();
@@ -148,12 +129,67 @@ class InscriptionController extends AbstractController
             $restauration->setTypeRepas("déjeuner");
             $inscription->addRestauration($restauration);
             $entityManager->persist($restauration);
-            $montant += 35;
+            $inscription->setMontant($inscription->getMontant() + 35);
         }
 
-        $inscription->setMontant($montant);
+        return $inscription;
+    }
 
+    private function addHotels(Request $request, Inscription $inscription): Inscription
+    {
+        if ($nuit13 = $request->get('nuit13')) {
+            if ($nuite = $this->getDoctrine()->getRepository(Nuite::class)->find($nuit13)) {
+                $inscription->addNuite($nuite);
+                $inscription->setMontant($inscription->getMontant() + $nuite->getProposer()->getTarifNuite());
+            } else {
+                $this->addFlash('errorNuite', 'Une erreur est survenu.');
+
+                return $this->redirectToRoute('inscription_index');
+            }
+        }
+        if ($nuit14 = $request->get('nuit14')) {
+            if ($nuite2 = $this->getDoctrine()->getRepository(Nuite::class)->find($nuit14)) {
+                $inscription->addNuite($nuite2);
+                $inscription->setMontant($inscription->getMontant() + $nuite2->getProposer()->getTarifNuite());
+            } else {
+                $this->addFlash('errorNuite', 'Une erreur est survenu.');
+
+                return $this->redirectToRoute('inscription_index');
+            }
+        }
+
+        return $inscription;
+    }
+
+    /**
+     * @Route("/submit", name="_submit", methods={"POST"})
+     * 
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function inscription(Request $request): Response
+    {
+        //Au cas où il y aurait un problème avec la récupération du user
+        if (!$user = $this->getUser()) {
+            return $this->redirectToRoute('home');
+        }
+        $inscription = new Inscription();
+        $inscription->setCompte($user);
         $entityManager = $this->getDoctrine()->getManager();
+
+        //Gestion des ateliers
+        $inscription = $this->addAteliers($request, $inscription);
+
+        //Gestion du montant total
+        $inscription->setMontant(100);
+
+        //Gestion des hotels
+        $inscription = $this->addHotels($request, $inscription);
+
+        //Gestion des repas
+        $inscription = $this->addRestaurations($request, $inscription, $entityManager);
+
         $entityManager->persist($inscription);
         $entityManager->flush();
 
@@ -166,7 +202,8 @@ class InscriptionController extends AbstractController
      *
      * @return Response
      */
-    public function recap():Response {
+    public function recap(): Response
+    {
         return $this->render('inscription/recap.html.twig');
     }
 }
