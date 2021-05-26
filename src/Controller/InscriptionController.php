@@ -202,10 +202,13 @@ class InscriptionController extends AbstractController
 
             return $this->redirectToRoute('app_login');
         }
-        //Au cas où l'utilisateur aurait déjà validé son inscription
-        if ($user->getInscription()->isValidated()) {
 
-            return $this->redirectToRoute('inscription_recap');
+        //Au cas où l'utilisateur aurait déjà validé son inscription
+        if ($user->getInscription()) {
+            if ($user->getInscription()->isValidated()) {
+
+                return $this->redirectToRoute('inscription_recap');
+            }
         }
 
 
