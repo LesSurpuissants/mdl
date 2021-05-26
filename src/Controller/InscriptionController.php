@@ -33,11 +33,14 @@ class InscriptionController extends AbstractController
 
             return $this->redirectToRoute('app_login');
         }
-        //Au cas où l'utilisateur aurait déjà validé son inscription
-        if ($user->getInscription()->isValidated()) {
+        if ($user->getInscription()) {
+            if ($user->getInscription()->isValidated()) {
 
-            return $this->redirectToRoute('inscription_recap');
+                return $this->redirectToRoute('inscription_recap');
+            }
         }
+        //Au cas où l'utilisateur aurait déjà validé son inscription
+
         $ateliers = $this->getDoctrine()->getRepository(Atelier::class)->findAll();
         $hotels = $this->getDoctrine()->getRepository(Hotel::class)->findAll();
 
@@ -81,6 +84,11 @@ class InscriptionController extends AbstractController
      */
     private function addAteliers(Request $request, Inscription $inscription): Inscription
     {
+        if ($ateliers = $inscription->getAteliers()) {
+            foreach ($ateliers as $atelier) {
+                $inscription->removeAtelier($atelier);
+            }
+        }
         $countAtelier = 0;
         for ($i = 1; $i < 7; $i++) {
             if ($request->get('atelier' . $i)) {
@@ -115,6 +123,11 @@ class InscriptionController extends AbstractController
     private function addRestaurations(Request $request, Inscription $inscription, EntityManager $entityManager): Inscription
     {
         //Gestion des repas
+        if ($repass = $inscription->getRestaurations()) {
+            foreach ($repass as $repas) {
+                $inscription->removeRestauration($repas);
+            }
+        }
 
         if ($request->get('dejSam')) {
             $restauration = new Restauration();
@@ -146,6 +159,11 @@ class InscriptionController extends AbstractController
 
     private function addHotels(Request $request, Inscription $inscription): Inscription
     {
+        if ($nuites = $inscription->getNuites()) {
+            foreach ($nuites as $nuit) {
+                $inscription->removeNuite($nuit);
+            }
+        }
         if ($nuit13 = $request->get('nuit13')) {
             if ($nuite = $this->getDoctrine()->getRepository(Nuite::class)->find($nuit13)) {
                 $inscription->addNuite($nuite);
@@ -189,8 +207,14 @@ class InscriptionController extends AbstractController
 
             return $this->redirectToRoute('inscription_recap');
         }
-        $inscription = new Inscription();
-        $inscription->setCompte($user);
+
+
+        if (!$inscription = $user->getInscription()) {
+            $inscription = new Inscription();
+            $inscription->setCompte($user);
+        }
+
+
         $entityManager = $this->getDoctrine()->getManager();
 
         //Gestion des ateliers
